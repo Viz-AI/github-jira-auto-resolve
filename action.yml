@@ -17,6 +17,10 @@ inputs:
         description: 'An existing fix version on jira, tickets will be added this fix version'
         default: ''
         required: true
+    prefix:
+        description: 'Prefix of the tickets to resolve e.g. "APP-".'
+        default: ''
+        required: false
     excluded_tickets:
         description: 'Comma separated list of tickets to exclude from resolver'
         default: ''

@@ -1,5 +1,5 @@
 const Fuse = require('fuse.js');
-const request = require('./services/request');
+const request = require('./request');
 
 class Jira {
     constructor({
@@ -12,45 +12,70 @@ class Jira {
         this.email = email;
     }
 
-    async getIssuesByFixVersion(fixVersion) {
-        return this
-            .request("/rest/api/latest/search?jql=fixVersion%20%3D%20\"App%20" + fixVersion + "\"")
-            .map(issue => issue.issues.key)
+    async getIssuesByFixVersion(prefix, fixVersion) {
+        let response = await this.request(`/rest/api/latest/search?jql=fixVersion%20%3D%20\"${prefix}%20${fixVersion}\"`)
+        return response.issues.map(issue => issue.key)
     }
 
     async getTransition(issue, forStatus) {
-        return this
-            .request(`/rest/api/latest/issue/${issue}/transitions`)
-            .filter(transition => transition.to.name === forStatus)
+        let response = await this.request(`/rest/api/latest/issue/${issue}/transitions`)
+
+        return response
+            .transitions
+            .filter(transition => transition.name === forStatus)
+            .shift()
             .id
     }
 
     async resolve(issues) {
-        return Promise.all(issues.map(issue => {
-            let transition = this.getTransition(issue, "Resolved")
+        let resolved = []
+        let errors = []
 
-            this.request(`/rest/api/latest/issue/${issue}/transitions`, 'post', {
-                transition: {
-                    id: transition
+        await Promise.all(
+            issues.map(async issue => {
+                try {
+                    let transition = await this.getTransition(issue, "Resolve")
+
+                    console.log(`Resolving ${issue} with transition ${transition}`)
+
+                    this.request(`/rest/api/latest/issue/${issue}/transitions`, 'post', {
+                        transition: {
+                            id: transition
+                        }
+                    })
+
+                    resolved.push(issue)
+                } catch (e) {
+                    console.log(`Error resolving ${issue}: ${e}`)
+
+                    errors.push({
+                        issue,
+                        error: e
+                    })
                 }
             })
-        }))
+        )
+
+        return {
+            resolved,
+            errors
+        }
     }
 
     async request(api, method = 'get', data = {}) {
         return request({
-          url: `${this.host}${api}`,
-          method,
-          data,
-          headers: {
-            user: this.email + ":" + this.token
-          },
-          auth: {
-            username: this.email,
-            password: this.token,
-          },
+            url: `https://${this.host}${api}`,
+            method,
+            data,
+            headers: {
+                user: this.email + ":" + this.token
+            },
+            auth: {
+                username: this.email,
+                password: this.token,
+            },
         });
-      }
+    }
 }
 
 module.exports = Jira;

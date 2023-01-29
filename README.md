@@ -8,6 +8,7 @@ A GitHub Actions plugin that automatically resolves Jira tickets after a release
 - `jira_email`: Email address of the user to login with. Default: `e@email.com`. Required.
 - `jira_token`: Auth token of the user to login with. Default: `""`. Required.
 - `fix_version`: An existing fix version on Jira, tickets will be added to this fix version. Default: `""`. Required.
+- `prefix`: Prefix of the tickets to resolve e.g. `App` in `App 1.52.0`. Default: `""`. Optional.
 - `excluded_tickets`: Comma separated list of tickets to exclude from resolver. Default: `""`. Optional.
 
 ## Outputs
@@ -31,6 +32,7 @@ with:
   jira_email: 'e@email.com'
   jira_token: 'fdsfd7f7ssd:3'
   fix_version: '1.0.0'
+  prefix: 'App'
 ```
 
 Change the input parameters as needed.

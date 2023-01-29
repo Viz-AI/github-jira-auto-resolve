@@ -10,18 +10,20 @@ async function main() {
     })
 
     const fix_version = core.getInput('fix_version');
-
+    const prefix = core.getInput('prefix');
+    const excluded_tickets = core.getInput('excluded_tickets');
+    
     console.log('Auto resolving issues, fix version is: ' + fix_version);
 
     const issues = await jira
-      .getIssuesByFixVersion(fix_version)
-      .filter((issue) => issue != core.getInput("excluded_tickets"))
+      .getIssuesByFixVersion(prefix, fix_version)
+      .filter((issue) => !excluded_tickets.includes(issue));
 
     console.log("Resolving issues: " + issues)
 
-    await jira.resolve(issues)
+    let response = await jira.resolve(issues)
 
-    core.setOutput('message', issues);
+    core.setOutput('message', response);
 
   } catch (error) {
     core.setFailed(error.message);
