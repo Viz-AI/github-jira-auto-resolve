@@ -4,9 +4,9 @@ A GitHub Actions plugin that automatically resolves Jira tickets after a release
 
 ## Inputs
 
-- `jira_host`: Root host of your JIRA installation without protocol (e.g. `"yourapp.atlassian.net"`). Default: `https://vizaiinc.atlassian.net`. Optional.
+- `jira_host`: Root host of your JIRA installation without protocol (e.g. `"yourapp.atlassian.net"`). Required.
 - `jira_email`: Email address of the user to login with. Default: `e@email.com`. Required.
-- `jira_token`: Auth token of the user to login with. Default: `knmD98cbfsd£jnfjnH?KHKH`. Required.
+- `jira_token`: Auth token of the user to login with. Default: `""`. Required.
 - `fix_version`: An existing fix version on Jira, tickets will be added to this fix version. Default: `""`. Required.
 - `excluded_tickets`: Comma separated list of tickets to exclude from resolver. Default: `""`. Optional.
 
@@ -27,8 +27,9 @@ To use this plugin, simply add the following code to your GitHub Actions workflo
 name: Jira Auto Resolver
 uses: your-github-username/jira-auto-resolver
 with:
+  jira_host: 'yourapp.atlassian.net',
   jira_email: 'e@email.com'
-  jira_token: 'knmD98cbfsd£jnfjnH?KHKH'
+  jira_token: 'fdsfd7f7ssd:3'
   fix_version: '1.0.0'
 ```
 

@@ -3,15 +3,15 @@ description: 'Automatically resolve Jira tickets after a release'
 inputs:
     jira_host:
         description: 'Root host of your JIRA installation without protocol. // (i.e "yourapp.atlassian.net")'
-        default: 'https://vizaiinc.atlassian.net'
-        required: false
+        default: 'https://atlassian.net'
+        required: true
     jira_email:
         description: 'Email address of the user to login with'
         default: 'e@email.com'
         required: true
     jira_token:
         description: 'Auth token of the user to login with'
-        default: 'knmD98cbfsd£jnfjnH?KHKH'
+        default: ''
         required: true
     fix_version:
         description: 'An existing fix version on jira, tickets will be added this fix version'
