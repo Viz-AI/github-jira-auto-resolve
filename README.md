@@ -1,106 +1,37 @@
-# Jira Changelog Action
+# Jira Auto Resolver
 
-Generates a changelog message by looking at Jira issue keys, surrounded by square brackets (i.e. [DEV-123]), in the git commit logs. When it finds one, it associates that Jira issue ticket with that commit and adds it to the output.
+A GitHub Actions plugin that automatically resolves Jira tickets after a release.
 
 ## Inputs
 
-### `jira_host`
-
-**Required** Root host of your JIRA installation without protocol. // (i.e "yourapp.atlassian.net")
-
-### `jira_email`
-
-**Required** Email address of the user to login with
-
-### `jira_token`
-
-**Required** Auth token of the user to login with
-
-### `jira_base_url`
-
-Jira base web URL for changelog message entries
-
-### `jira_ticket_id_pattern`
-
-Regex used to match the issue ticket key
-*Note: Use capture group one to isolate the key text within surrounding characters (if needed).*
-
-### `source_control_range_from`
-
-Starting branch to get range of commits
-
-### `source_control_range_to`
-
-Ending branch to get range of commits
-
-### `approval_statuses`
-
-Comma separated list of issue statuses treated as approved
-
-
-### `exclude_issue_types`
-
-Comma separated list of issue types to exclude from changelog
-
-
-### `include_pending_approval_section`
-
-Boolean flag indicating whether to include or exclude `Pending Approval` section
+- `jira_host`: Root host of your JIRA installation without protocol (e.g. `"yourapp.atlassian.net"`). Default: `https://vizaiinc.atlassian.net`. Optional.
+- `jira_email`: Email address of the user to login with. Default: `e@email.com`. Required.
+- `jira_token`: Auth token of the user to login with. Default: `knmD98cbfsd£jnfjnH?KHKH`. Required.
+- `fix_version`: An existing fix version on Jira, tickets will be added to this fix version. Default: `""`. Required.
+- `excluded_tickets`: Comma separated list of tickets to exclude from resolver. Default: `""`. Optional.
 
 ## Outputs
 
-### `changelog_message`
+- `message`: List of tickets resolved.
 
-Generated changelog entry
+## Implementation
 
-```
-Jira Tickets
----------------------
+- Runs using Node.js v16
+- Main script: `index.js`
 
-  * <Bug> - Unable to access date widget
-    [DEV-1234] https://yoursite.atlassian.net/browse/DEV-1234
+## Usage
 
-  * <Story> - Support left-handed keyboards
-    [DEV-5678] https://yoursite.atlassian.net/browse/DEV-5678
+To use this plugin, simply add the following code to your GitHub Actions workflow:
 
-  * <Story> - Search by location
-    [DEV-8901] https://yoursite.atlassian.net/browse/DEV-8901
-
-Other Commits
----------------------
-
-  * <cd6f512> - Fix typo in welcome message
-
-Pending Approval
----------------------
- ~ None. Yay! ~
+```yml
+name: Jira Auto Resolver
+uses: your-github-username/jira-auto-resolver
+with:
+  jira_email: 'e@email.com'
+  jira_token: 'knmD98cbfsd£jnfjnH?KHKH'
+  fix_version: '1.0.0'
 ```
 
-## Example usage
+Change the input parameters as needed.
 
-```yaml
-on: [push]
-
-jobs:
-  hello_world_job:
-    runs-on: ubuntu-latest
-    name: Changelog
-    steps:
-      - name: Set Version
-        run: echo ::set-env name=VERSION::1.1.1
-      # To use this repository's private action, you must check out the repository
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Changelog
-        id: changelog
-        uses: actions/jira-changelog@v1
-        with:
-          jira_host: 'myapp.atlassian.net'
-          jira_email: 'jirauser@myapp.com'
-          jira_token: 'qWoJBdlEp6pJy15fc9tGpsOOR2L5i35v'
-          jira_base_url: 'https://yoursite.atlassian.net'
-          source_control_range_from: 'develop'
-          source_control_range_to: 'master'
-      - name: Get the changelog message
-        run: echo "${{ steps.changelog.outputs.changelog_message }}"
-```
+Enjoy using Jira Auto Resolver!
