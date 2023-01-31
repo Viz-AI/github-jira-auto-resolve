@@ -12,12 +12,12 @@ async function main() {
     const fix_version = core.getInput('fix_version');
     const prefix = core.getInput('prefix');
     const excluded_tickets = core.getInput('excluded_tickets');
-    
+
     console.log('Auto resolving issues, fix version is: ' + fix_version);
 
-    const issues = await jira
-      .getIssuesByFixVersion(prefix, fix_version)
-      .filter((issue) => !excluded_tickets.includes(issue));
+    var issues = await jira.getIssuesByFixVersion(prefix, fix_version)
+
+    issues = issues.filter((issue) => !excluded_tickets.includes(issue));
 
     console.log("Resolving issues: " + issues)
 
